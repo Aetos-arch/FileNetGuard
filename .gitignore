@@ -1,0 +1,8 @@
+*.db
+*.pdf
+*.conf
+*.json
+.obsidian
+/test/
+/test/*
+TDL.md
