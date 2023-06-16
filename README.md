@@ -8,7 +8,7 @@ FileNetGuard offers the following key features:
 
 - Regular security audits for files using advanced hashing algorithms (currently limited to SHA-256) and network behavior verification algorithms 🚪🔍✅
 - Detailed reports indicating any unauthorized modifications on files or ports (from closed to open, from unlistened to listened) 📋
-- User-friendly SQLite database for easy data management 🗄️
+- User-friendly SQLite database for easy data management and export this database in csv files 🗄️
 
 ## Getting Started 🚀
 
