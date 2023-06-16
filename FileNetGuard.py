@@ -52,6 +52,12 @@ def init():
     logger.info("Ports monitored!")
 
 def init_db():
+    if os.path.exists(DB_FILE):
+        os.remove(DB_FILE)
+        logging.info("Database file deleted.")
+    else:
+        logging.info("Creating a database for the first time.")
+
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
 
