@@ -6,6 +6,7 @@ import hashlib
 import socket
 import psutil
 import datetime
+import subprocess
 
 DB_FILE = "FileNetGuard.db"
 CONF_SUPERVISED_FOLDERS = "FileNetGuard_conf.json"
@@ -342,6 +343,59 @@ def exportdb():
 
     conn.close()
 
+def schedule_periodic_report():
+  # Check if cronie package is installed
+    process = subprocess.run(['pacman', '-Qs', 'cronie'], capture_output=True, text=True)
+    
+    if process.returncode != 0:
+        # cronie package is not installed, install and enable it
+        print("cronie package is not installed. Installation will begin...")
+        
+        # Install cronie package
+        install_process = subprocess.run(['sudo', 'pacman', '-Sy', 'cronie'], capture_output=True, text=True)
+        
+        if install_process.returncode == 0:
+            print("cronie package has been installed successfully.")
+            
+            # Enable cronie service
+            enable_process = subprocess.run(['sudo', 'systemctl', 'enable', 'cronie.service'], capture_output=True, text=True)
+            
+            if enable_process.returncode == 0:
+                print("cronie service has been enabled successfully.")
+                return True
+            else:
+                print("Error enabling cronie service:", enable_process.stderr)
+        else:
+            print("Error installing cronie package:", install_process.stderr)
+    else:
+        print("cronie package is already installed.")
+
+    while True:
+        try:
+            days = int(input("Enter the number of days between each execution: "))
+            hours = int(input("Enter the number of hours between each execution: "))
+            minutes = int(input("Enter the number of minutes between each execution: "))
+            break
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+
+    # Format the cron schedule string
+    schedule = f"{minutes} {hours} * * */{days}"
+
+    # Get the absolute path to the Python script
+    script_path = os.path.abspath(__file__)
+
+    # Set up the cron command
+    cron_command = f"python {script_path} --report"
+
+    try:
+        # Use subprocess to add the cron job
+        subprocess.run(['crontab', '-l'], check=True, capture_output=True, text=True)
+        subprocess.run(['echo', cron_command, '|', 'crontab', '-'], check=True, capture_output=True, text=True)
+        print("Cron job successfully scheduled.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error scheduling cron job: {e.stderr}")
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -349,6 +403,7 @@ def main():
     parser.add_argument('--report', action='store_true', help="Generate a report")
     parser.add_argument('--openport', action='store_true', help="Open a port")
     parser.add_argument('--exportdb', action='store_true', help="Export database in txt files")
+    parser.add_argument('--schedule_periodic_report', action='store_true', help="Schedule periodic report")
 
     args = parser.parse_args()
     if args.init:
@@ -357,6 +412,8 @@ def main():
         generate_report()
     elif args.openport:
         open_port(8090)
+    elif args.schedule_periodic_report:
+        schedule_periodic_report()
     elif args.exportdb:
         exportdb()
     else:
