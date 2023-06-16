@@ -394,13 +394,13 @@ def schedule_periodic_report():
 
 def setup_logging(debug):
     level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(level=level, filename=LOG_FILE, filemode="w")
-    if debug:
-        console = logging.StreamHandler(sys.stdout)
-        console.setLevel(level)
-        formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", "%Y-%m-%d %H:%M:%S")
-        console.setFormatter(formatter)
-        logging.getLogger("").addHandler(console)
+    logging.basicConfig(level=level, filename=LOG_FILE, filemode="w", format="%(asctime)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+    
+    console = logging.StreamHandler(sys.stdout)
+    console.setLevel(level)
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    console.setFormatter(formatter)
+    logging.getLogger("").addHandler(console)
 
 def main():
     parser = argparse.ArgumentParser()
