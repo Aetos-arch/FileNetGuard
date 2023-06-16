@@ -395,7 +395,7 @@ def schedule_periodic_report():
         print("Cron job successfully scheduled.")
     except subprocess.CalledProcessError as e:
         print(f"Error scheduling cron job: {e.stderr}")
-
+        
 def main():
     parser = argparse.ArgumentParser()
 
@@ -404,6 +404,7 @@ def main():
     parser.add_argument('--openport', action='store_true', help="Open a port")
     parser.add_argument('--exportdb', action='store_true', help="Export database in txt files")
     parser.add_argument('--schedule_periodic_report', action='store_true', help="Schedule periodic report")
+    parser.add_argument('--port', type=int, help="Specify the port to open")
 
     args = parser.parse_args()
     if args.init:
@@ -411,7 +412,10 @@ def main():
     elif args.report:
         generate_report()
     elif args.openport:
-        open_port(8090)
+        if args.port:
+            open_port(args.port)
+        else:
+            print("Please specify the port using the --port argument.")
     elif args.schedule_periodic_report:
         schedule_periodic_report()
     elif args.exportdb:
