@@ -314,12 +314,41 @@ def open_port(port):
     finally:
         server_socket.close()
 
+def exportdb():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+
+    # Récupérer la liste des tables
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = [row[0] for row in cursor.fetchall()]
+
+    # Vérifier si le dossier d'export existe, sinon le créer
+    export_folder = "DataBaseExport"
+    if not os.path.exists(export_folder):
+        os.makedirs(export_folder)
+
+    # Exporter chaque table dans un fichier texte séparé
+    for table in tables:
+        file_path = os.path.join(export_folder, f"{table}.txt")
+
+        cursor.execute(f"SELECT * FROM {table};")
+        table_data = cursor.fetchall()
+
+        with open(file_path, "w") as file:
+            # Écrire les données de la table dans le fichier
+            for row in table_data:
+                file.write(",".join(str(value) for value in row))
+                file.write("\n")
+
+    conn.close()
+
 def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--init', action='store_true', help="Initialize")
     parser.add_argument('--report', action='store_true', help="Generate a report")
     parser.add_argument('--openport', action='store_true', help="Open a port")
+    parser.add_argument('--exportdb', action='store_true', help="Export database in txt files")
 
     args = parser.parse_args()
     if args.init:
@@ -328,6 +357,8 @@ def main():
         generate_report()
     elif args.openport:
         open_port(8090)
+    elif args.exportdb:
+        exportdb()
     else:
         parser.print_help()
 
