@@ -329,7 +329,7 @@ def exportdb():
 
     # Exporter chaque table dans un fichier texte séparé
     for table in tables:
-        file_path = os.path.join(export_folder, f"{table}.txt")
+        file_path = os.path.join(export_folder, f"{table}.csv")
 
         cursor.execute(f"SELECT * FROM {table};")
         table_data = cursor.fetchall()
