@@ -49,29 +49,29 @@ options:
 
 ```
 
-FileNetGuard initializer : 
+🚀 FileNetGuard initializer :
 
 ```bash
 python3 FileNetGuard.py --init
 ```
 
-Generate a report : 
+📊 Generate a report:
+
 
 ```bash
 python3 FileNetGuard.py --report
 ```
-Export database in CSV format: 
+📂 Export database in CSV format:
 
 ```bash
 python3 FileNetGuard.py --exportdb
 ```
-Automate report generation : 
+
+🕒 Automate report generation:
 
 ```bash
 python3 FileNetGuard.py --schedule_periodic_report
 ```
-Have fun!
-
 ## Contribution 🤝
 
 We welcome contributions from the open-source community to enhance FileNetGuard's capabilities and security. Please read our contribution guidelines for more information.
