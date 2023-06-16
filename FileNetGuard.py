@@ -7,9 +7,16 @@ import socket
 import psutil
 import datetime
 import subprocess
+import logging
+import sys
 
 DB_FILE = "FileNetGuard.db"
 CONF_SUPERVISED_FOLDERS = "FileNetGuard_conf.json"
+LOG_FILE = "FileNetGuard.log"
+
+# Initialisation du logger
+logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG)
+logger = logging.getLogger()
 
 def is_port_open(port):
     try:
@@ -33,29 +40,16 @@ def get_current_date():
 
 def init():
     init_db()
-    print("╔═══════════════════════════════════════════╗")
-    print("║             Database created!             ║")
-    print("║             DB_FILE = {}                  ".format(DB_FILE))
-    print("╚═══════════════════════════════════════════╝\n")
+    logger.info("Database created! DB_FILE = %s", DB_FILE)
     
     init_conf()
-    print("╔═══════════════════════════════════════════════════════════════════╗")
-    print("║          Configuration file created!                              ║")
-    print("║          CONF_SUPERVISED_FOLDERS = {}               ".format(CONF_SUPERVISED_FOLDERS))
-    print("╚═══════════════════════════════════════════════════════════════════╝\n")
-    
+    logger.info("Configuration file created! CONF_SUPERVISED_FOLDERS = %s", CONF_SUPERVISED_FOLDERS)
+
     init_file_data()
-    print("╔═════════════════════════════════╗")
-    print("║         Files monitored!        ║")
-    print("╚═════════════════════════════════╝\n")
-    
+    logger.info("Files monitored!")
+   
     init_port_data()
-    print("╔═════════════════════════════╗")
-    print("║       Ports monitored!      ║")
-    print("╚═════════════════════════════╝")
-
-
-
+    logger.info("Ports monitored!")
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
@@ -142,7 +136,7 @@ def init_file_data():
             data = json.load(f)
             supervised_folders = data.get("supervised_folders", [])
     except Exception as e:
-        print("Error while reading the configuration file:", str(e))
+        logging.error("Error while reading the configuration file: %s", str(e))
         return
 
     conn = sqlite3.connect(DB_FILE)
@@ -151,7 +145,7 @@ def init_file_data():
     for folder in supervised_folders:
         path = folder.get("path", "")
         if not path:
-            print("Invalid path:", path)
+            logging.warning("Invalid path: %s", path)
             continue
 
         for root, _, files in os.walk(path):
@@ -163,13 +157,13 @@ def init_file_data():
                         content = file.read()
                         hash_sha256 = hashlib.sha256(content).hexdigest()
                 except Exception as e:
-                    print(f"Error while processing the file {file_path}:", str(e))
+                    logging.error("Error while processing the file %s: %s", file_path, str(e))
                     continue
 
                 try:
                     cursor.execute("INSERT OR IGNORE INTO Supervised_File (path, hash) VALUES (?, ?)", (file_path, hash_sha256))
                 except Exception as e:
-                    print(f"Error while inserting the file {file_path}:", str(e))
+                    logging.error("Error while inserting the file %s: %s", file_path, str(e))
                     continue
 
     conn.commit()
@@ -395,7 +389,17 @@ def schedule_periodic_report():
         print("Cron job successfully scheduled.")
     except subprocess.CalledProcessError as e:
         print(f"Error scheduling cron job: {e.stderr}")
-        
+
+def setup_logging(debug):
+    level = logging.DEBUG if debug else logging.INFO
+    logging.basicConfig(level=level, filename=LOG_FILE, filemode="w")
+    if debug:
+        console = logging.StreamHandler(sys.stdout)
+        console.setLevel(level)
+        formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", "%Y-%m-%d %H:%M:%S")
+        console.setFormatter(formatter)
+        logging.getLogger("").addHandler(console)
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -405,20 +409,29 @@ def main():
     parser.add_argument('--exportdb', action='store_true', help="Export database in txt files")
     parser.add_argument('--schedule_periodic_report', action='store_true', help="Schedule periodic report")
     parser.add_argument('--port', type=int, help="Specify the port to open")
+    parser.add_argument('--debug', action='store_true', help="Enable debug mode")
 
     args = parser.parse_args()
+
+    setup_logging(args.debug)
+
     if args.init:
+        logging.info("Initializing...")
         init()
     elif args.report:
+        logging.info("Generating a report...")
         generate_report()
     elif args.openport:
         if args.port:
+            logging.info("Opening port {}...".format(args.port))
             open_port(args.port)
         else:
             print("Please specify the port using the --port argument.")
     elif args.schedule_periodic_report:
+        logging.info("Scheduling periodic report...")
         schedule_periodic_report()
     elif args.exportdb:
+        logging.info("Exporting database in CSV files...")
         exportdb()
     else:
         parser.print_help()
