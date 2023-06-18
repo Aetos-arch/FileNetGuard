@@ -6,7 +6,7 @@ FileNetGuard is a security integrity verification software designed for Linux se
 
 FileNetGuard offers the following key features:
 
-- Regular security audits for files using advanced hashing algorithms (currently limited to SHA-256) and network behavior verification algorithms 🔍
+- Regular security audits for files using advanced hashing algorithm (SHA-256) and network behavior verification algorithms 🔍
 - Detailed reports indicating any unauthorized modifications on files or ports (from closed to open, from unlistened to listened) 📋
 - Export of the user friendly SQLite database to CSV files for streamlined reporting, investigation 🗄️
 - Report automation 🤖
