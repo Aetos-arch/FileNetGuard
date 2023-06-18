@@ -1,6 +1,6 @@
 # Why FileNetGuard ?
 
-FileNetGuard is a security integrity verification software designed for Linux servers 🐧 and embedded systems ✈️. It provides robust protection against unauthorized modifications and ensures the integrity of your system (files and network ports), including the detection of rootkits and other malicious modifications.
+FileNetGuard is a security integrity verification software designed for Linux servers 🐧 and embedded systems ✈️. It provides detection against unauthorized modifications to protect the integrity of your system and network.
 
 ## Features
 
