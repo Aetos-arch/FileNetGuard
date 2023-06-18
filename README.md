@@ -11,7 +11,7 @@ FileNetGuard offers the following key features:
 - Export of the user friendly SQLite database to CSV files for streamlined reporting, investigation 🗄️
 - Report automation 🤖
 
-## Getting Started
+## Getting Started 🚀
 
 To use FileNetGuard, follow these simple steps:
 1. Install Python3 if you don't already have it. 
