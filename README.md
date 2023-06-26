@@ -16,13 +16,13 @@ FileNetGuard offers the following key features:
 To use FileNetGuard, follow these simple steps:
 
 ### Install Python3 if you don't already have it
-- On ArchLinux : 
+On ArchLinux : 
 ```bash
 sudo pacman -Syu
 sudo pacman -S python3
 python3 --version
 ```
-- On Debian : 
+On Debian : 
 ```bash
 sudo apt update
 sudo apt install python3
