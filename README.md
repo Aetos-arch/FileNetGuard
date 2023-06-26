@@ -14,7 +14,8 @@ FileNetGuard offers the following key features:
 ## Getting Started 🚀
 
 To use FileNetGuard, follow these simple steps:
-1. Install Python3 if you don't already have it. 
+
+### Install Python3 if you don't already have it
 - On ArchLinux : 
 ```bash
 sudo pacman -Syu
@@ -27,13 +28,14 @@ sudo apt update
 sudo apt install python3
 python3 --version
 ```
-2. Clone this repository : 
+
+### Clone this repository
 ```bash
 git clone https://github.com/Aetos-arch/FileNetGuard.git
 cd FileNetGuard
 ```
 
-3. Use basic commands :
+### Use basic commands
 ```bash
 usage: FileNetGuard.py [-h] [--init] [--report] [--openport] [--exportdb] [--schedule_periodic_report] [--port PORT] [--debug]
 
